@@ -1,0 +1,67 @@
+version: '3.0'
+services:
+  redis-master:
+    image: redis
+    restart: always
+    # 防止docker-compose up -d 启动起来的容器出现立即停止的情况
+    tty: true
+    container_name: redis-master
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - /Users/narcos/Documents/work/redis/conf/redis-master.conf:/etc/redis/redis.conf
+      - /Users/narcos/Documents/work/redis/logs/master/redis.log:/usr/redis-log/redis.log
+    command:
+      ["redis-server","/etc/redis/redis.conf"]
+    # 给容器赋予root权限（因为挂载的目录需要root权限）  
+    privileged: true
+    networks:
+      redis-network:
+        ipv4_address: 172.60.0.2
+    ports:
+      - 6379:6379
+  redis-slave-1:
+    image: redis
+    restart: always
+    # 防止docker-compose up -d 启动起来的容器出现立即停止的情况
+    tty: true
+    container_name: redis-slave-1
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - /Users/narcos/Documents/work/redis/conf/redis-slave.conf:/etc/redis/redis.conf
+      - /Users/narcos/Documents/work/redis/logs/slave1/redis.log:/usr/redis-log/redis.log
+    command:
+      ["redis-server","/etc/redis/redis.conf"]
+    # 给容器赋予root权限（因为挂载的目录需要root权限）  
+    privileged: true
+    networks:
+      redis-network:
+        ipv4_address: 172.60.0.3
+    ports:
+      - 6380:6379
+  redis-slave-2:
+    image: redis
+    restart: always
+    # 防止docker-compose up -d 启动起来的容器出现立即停止的情况
+    tty: true
+    container_name: redis-slave-2
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - /Users/narcos/Documents/work/redis/conf/redis-slave.conf:/etc/redis/redis.conf
+      - /Users/narcos/Documents/work/redis/logs/slave2/redis.log:/usr/redis-log/redis.log
+    command:
+      ["redis-server","/etc/redis/redis.conf"]
+    # 给容器赋予root权限（因为挂载的目录需要root权限）  
+    privileged: true
+    networks:
+      redis-network:
+        ipv4_address: 172.60.0.4
+    ports:
+      - 6381:6379
+networks:
+  redis-network:
+    ipam:
+      config:
+        - subnet: 172.60.0.0/16
