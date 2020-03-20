@@ -1,0 +1,33 @@
+version: '3.0'
+services:
+  redis-master:
+    image: redis
+    # 由于做了持久化的原因，主库不能重启
+    # 当主库崩溃是，将一个从库升级为主库，将主库作为前一步升级为主库的从库的slave
+    # restart: always
+    # 防止docker-compose up -d 启动起来的容器出现立即停止的情况
+    tty: true
+    container_name: redis-master
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./redis-master.conf:/etc/redis/redis.conf
+      - ./redis-master.log:/etc/redis/redis.log
+      - ./data-master/:/data/
+    command:
+      ["redis-server","/etc/redis/redis.conf"]
+    # 给容器赋予root权限（因为挂载的目录需要root权限）  
+    privileged: true
+    ports:
+      - 6379:6379
+# networks:
+#  创建网络  
+#  redis-network:
+#    ipam:
+#      config:
+#        - subnet: 172.60.0.0/16
+    # 使用现有的网络
+networks:    
+  default:
+    external:
+      name: redis_redis-network

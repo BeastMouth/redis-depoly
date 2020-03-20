@@ -1,0 +1,43 @@
+version: '3.0'
+services:
+  redis-slave-1:
+    image: redis
+    restart: always
+    # 防止docker-compose up -d 启动起来的容器出现立即停止的情况
+    tty: true
+    container_name: redis-slave-1
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./redis-slave.conf:/etc/redis/redis.conf
+      - ./redis-slave-1.log:/etc/redis/redis.log
+      - ./data-slave-1/:/data/
+    command:
+      ["redis-server","/etc/redis/redis.conf","--slaveof 172.60.0.2 6379"]
+    # 给容器赋予root权限（因为挂载的目录需要root权限）  
+    privileged: true
+    ports:
+      - 6380:6379
+  redis-slave-2:
+    image: redis
+    restart: always
+    # 防止docker-compose up -d 启动起来的容器出现立即停止的情况
+    tty: true
+    container_name: redis-slave-2
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./redis-slave.conf:/etc/redis/redis.conf
+      - ./redis-slave-2.log:/etc/redis/redis.log
+      - ./data-slave-2/:/data/
+    command:
+      ["redis-server","/etc/redis/redis.conf","--slaveof 172.60.0.2 6379"]
+    # 给容器赋予root权限（因为挂载的目录需要root权限）  
+    privileged: true
+    ports:  
+      - 6381:6379
+networks:
+    # 使用现有的网络
+  default:
+    external:
+      name: redis_redis-network
