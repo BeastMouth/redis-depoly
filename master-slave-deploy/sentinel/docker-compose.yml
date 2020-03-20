@@ -1,0 +1,51 @@
+version: '3.0'
+services:
+  redis-sentinel-1:
+    image: redis
+    tty: true
+    container_name: redis-sentinel-1
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./sentinel.conf:/etc/redis/sentinel.conf
+      - ./sentinel-1.log:/tmp/sentinel.log
+    command:
+      ["redis-server","/etc/redis/sentinel.conf","--sentinel"]
+    # 给容器赋予root权限（因为挂载的目录需要root权限）  
+    privileged: true
+    ports:
+      - 26379:26379
+  redis-sentinel-2:
+    image: redis
+    tty: true
+    container_name: redis-sentinel-2
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./sentinel.conf:/etc/redis/sentinel.conf
+      - ./sentinel-2.log:/tmp/sentinel.log
+    command:
+      ["redis-server","/etc/redis/sentinel.conf","--sentinel"]
+    # 给容器赋予root权限（因为挂载的目录需要root权限）  
+    privileged: true
+    ports:
+      - 26380:26379
+  redis-sentinel-3:
+    image: redis
+    tty: true
+    container_name: redis-sentinel-3
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./sentinel.conf:/etc/redis/sentinel.conf
+      - ./sentinel-3.log:/tmp/sentinel.log
+    command:
+      ["redis-server","/etc/redis/sentinel.conf","--sentinel"]
+    # 给容器赋予root权限（因为挂载的目录需要root权限）  
+    privileged: true
+    ports:
+      - 26381:26379
+networks:    
+  default:
+    external:
+      name: redis_redis-network
